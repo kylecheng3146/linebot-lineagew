@@ -41,31 +41,15 @@ def handle_message(event):
     if event.message.type != "text":
         return
 
-    if event.message.text == "說話":
-        reply_msg = "我可以說話囉，歡迎來跟我互動 ^_^ "
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
-        return
+    parts = event.message.text.split("；")
+    keywords = parts[0]
+    line_name = parts[1]
+    lineagew_name = parts[2]
+    club = parts[3]
+    conn = connect_to_db()
+    cursor = conn.cursor()
 
-    if event.message.text == "閉嘴":
-        reply_msg = "好的，我乖乖閉嘴 > <，如果想要我繼續說話，請跟我說 「說話」 > <"
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
-        return
-
-    if event.message.text == '簽到':
-        test = "簽到；James；ouo〻銀行；你是我的榮耀"
-        parts = test.split("；")
-        sign = parts[0]
-        line_name = parts[1]
-        lineagew_name = parts[2]
-        club = parts[3]
-        reply_msg = "123"
-        conn = connect_to_db()
-        cursor = conn.cursor()
-    
+    if keywords == "簽到":
         try:
             query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
             data = (lineagew_name, line_name, club)
@@ -82,8 +66,8 @@ def handle_message(event):
             TextSendMessage(text=reply_msg))
         
         return
-    
-    if event.message.text == "找":
+
+    if keywords == "找":
         conn = connect_to_db()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM member")
@@ -94,7 +78,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=str(results)))
         return
-    
+
 def connect_to_db():
     conn = psycopg2.connect(
         host="ep-white-firefly-975577-pooler.us-east-1.postgres.vercel-storage.com",
