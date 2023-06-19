@@ -56,9 +56,6 @@ def handle_message(event):
         return
 
     if event.message.text in "簽到":
-        data = {
-            'Kyle': '煉獄'
-        }
         parts = event.message.text.split("；")
         sign = parts[0]
         line_name = parts[1]
@@ -75,9 +72,11 @@ def handle_message(event):
         try:
             cursor.execute(query, data)
             conn.commit()
-            reply_msg = lineagew_name, "簽到完成" 
+            reply_msg = lineagew_name + "簽到完成" 
+            print("数据插入成功！")
         except (Exception, psycopg2.Error) as error:
             reply_msg = "簽到失敗:", error
+            print("数据插入失敗！")
         finally:
             conn.close()
             
