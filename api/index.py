@@ -51,5 +51,12 @@ def handle_message(event):
             TextSendMessage(text=reply_msg))
         return
 
+    if event.message.text == "test":
+        reply_msg = "test123"
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg))
+        return
+
 if __name__ == "__main__":
     app.run()
