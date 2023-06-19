@@ -62,7 +62,8 @@ def handle_message(event):
         json_str = df.to_json(orient='index')
         json_data = json.loads(json_str)
         with open(join('data', 'sign.json'), 'r') as file:
-            self.wfile.write(json_data)
+            for line in file:
+                self.wfile.write(json_data)
 
         line_bot_api.reply_message(
             event.reply_token,
