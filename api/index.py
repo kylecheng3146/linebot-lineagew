@@ -2,6 +2,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from os.path import join
 import pandas as pd
 import json
 
@@ -54,46 +55,18 @@ def handle_message(event):
         return
 
     if event.message.text == "簽到":
-        # 创建key-value字典
         data = {
-            'Kyle': '煉獄',
+            'Kyle': '煉獄'
         }
-
-        # 将字典转换为DataFrame
         df = pd.DataFrame.from_dict(data, orient='index', columns=['value'])
-
-        # 将DataFrame转换为JSON字符串
         json_str = df.to_json(orient='index')
-
-        # 解析JSON字符串为Python对象
         json_data = json.loads(json_str)
-
-        # 将Python对象写入JSON文件
-        with open('sign.json', 'w') as file:
-            json.dump(json_data, file)
-        reply_msg = "test123"
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
-        return
-
-    if event.message.text == "找":
-        # 读取JSON文件
-        with open('sign.json', 'r') as file:
-            json_data = json.load(file)
-
-        # 查询特定key的value
-        key = 'Kyle'
-        value = json_data.get(key)
-
-        if value is not None:
-            reply_msg = "這個 '{key}' 是: {value}"
-        else:
-            reply_msg = "找不到關於 '{key}' 的資料"
+        with open(join('data', 'sign.json'), 'r') as file:
+            self.wfile.write(json_data)
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=reply_msg))
+            TextSendMessage(text="success"))
         return
 
 if __name__ == "__main__":
