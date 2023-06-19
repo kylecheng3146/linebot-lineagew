@@ -69,6 +69,25 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text="success"))
         return
+    
+    if event.message.text == "找":
+        # 读取JSON文件
+        with open('sign.json', 'r') as file:
+            json_data = json.load(file)
+
+        # 查询特定key的value
+        key = 'Kyle'
+        value = json_data.get(key)
+        reply_msg = ""
+        if value is not None:
+            reply_msg = "The value for key '{key}' is: {value}"
+        else:
+            reply_msg = "No value found for key '{key}'"
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg))
+        return
 
 if __name__ == "__main__":
     app.run()
