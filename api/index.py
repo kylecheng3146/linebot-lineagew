@@ -72,7 +72,7 @@ def handle_message(event):
     
     if event.message.text == "找":
         # 读取JSON文件
-        with open('sign.json', 'r') as file:
+        with open(join('data', 'sign.json'), 'r') as file:
             json_data = json.load(file)
 
         # 查询特定key的value
