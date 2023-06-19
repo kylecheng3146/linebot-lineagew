@@ -55,16 +55,33 @@ def handle_message(event):
             data = (lineagew_name, line_name, club)
             cursor.execute(query, data)
             conn.commit()
-            reply_msg = lineagew_name + "簽到成功"
+            reply_msg = lineagew_name + " 簽到成功"
         except (Exception, psycopg2.Error) as error:
-            reply_msg = lineagew_name + "簽到失敗"
+            reply_msg = lineagew_name + " 簽到失敗"
         finally:
             conn.close()
                 
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=reply_msg))
-        
+        return
+
+    if keywords == "刪除":
+        keyword = parts[1]
+        try:
+            query = "DELETE FROM member WHERE lineagew_name = %s OR line_name = %s"
+            data = (keyword,keyword)
+            cursor.execute(query, data)
+            conn.commit()
+            reply_msg = "恭喜你 " + lineagew_name + " 刪除成功"
+        except (Exception, psycopg2.Error) as error:
+            reply_msg = "很遺憾 " + lineagew_name + " 刪除失敗"
+        finally:
+            conn.close()
+                
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg))
         return
 
     if keywords == "找":
@@ -89,8 +106,6 @@ def handle_message(event):
             print("查询資料出錯:", error)
         finally:
             conn.close()
-        return
-
         return
 
 def connect_to_db():
