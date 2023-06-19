@@ -74,17 +74,25 @@ def handle_message(event):
         with open(join('data', 'sign.json'), 'r') as file:
             json_data = json.load(file)
 
-        key = 'Kyle'
-        value = json_data.get(key)
-        reply_msg = ""
-        if value is not None:
-            reply_msg = "The value for key '{key}' is: {value}"
-        else:
-            reply_msg = "No value found for key '{key}'"
+        # Assuming you already have the json_data dictionary
+        json_string = json.dumps(json_data)
 
+        # Print the JSON string
         line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+        event.reply_token,
+        TextSendMessage(text=json_string))
+
+        # key = 'Kyle'
+        # value = json_data.get(key)
+        # reply_msg = ""
+        # if value is not None:
+        #     reply_msg = "The value for key '{key}' is: {value}"
+        # else:
+        #     reply_msg = "No value found for key '{key}'"
+
+        # line_bot_api.reply_message(
+        #     event.reply_token,
+        #     TextSendMessage(text=reply_msg))
         return
 
 if __name__ == "__main__":
