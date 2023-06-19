@@ -73,9 +73,9 @@ def handle_message(event):
             data = (keyword,keyword)
             cursor.execute(query, data)
             conn.commit()
-            reply_msg = "恭喜你 " + lineagew_name + " 刪除成功"
+            reply_msg = "恭喜你 " + keyword + " 刪除成功"
         except (Exception, psycopg2.Error) as error:
-            reply_msg = "很遺憾 " + lineagew_name + " 刪除失敗"
+            reply_msg = "很遺憾 " + keyword + " 刪除失敗"
         finally:
             conn.close()
                 
