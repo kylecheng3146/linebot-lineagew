@@ -61,19 +61,20 @@ def handle_message(event):
         line_name = parts[1]
         lineagew_name = parts[2]
         club = parts[3]
-        conn = connect_to_db()
-        cursor = conn.cursor()
+        reply_msg = "123"
+        # conn = connect_to_db()
+        # cursor = conn.cursor()
     
-        try:
-            query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
-            data = (lineagew_name, line_name, club)
-            cursor.execute(query, data)
-            conn.commit()
-            reply_msg = "数据插入成功！"
-        except (Exception, psycopg2.Error) as error:
-            reply_msg = "插入数据时出错:", error
-        finally:
-            conn.close()
+        # try:
+        #     query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
+        #     data = (lineagew_name, line_name, club)
+        #     cursor.execute(query, data)
+        #     conn.commit()
+        #     reply_msg = "数据插入成功！"
+        # except (Exception, psycopg2.Error) as error:
+        #     reply_msg = "插入数据时出错:", error
+        # finally:
+        #     conn.close()
                 
         line_bot_api.reply_message(
             event.reply_token,
