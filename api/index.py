@@ -75,11 +75,15 @@ def handle_message(event):
             query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s OR club LIKE %s"
             cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
             results = cursor.fetchall()
-            for member in results:
-                output += ", ".join(str(field) for field in member)
+
+            formatted_results = ""
+            for row in results:
+                formatted_row = " - ".join(str(item) for item in row)
+                formatted_results += f"{formatted_row}\n"
+
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=output))
+                TextSendMessage(text=formatted_results))
             return 
         except (Exception, psycopg2.Error) as error:
             print("查询資料出錯:", error)
