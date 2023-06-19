@@ -61,28 +61,11 @@ def handle_message(event):
         line_name = parts[1]
         lineagew_name = parts[2]
         club = parts[3]
-
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        reply_msg = ""
-        
-        # 示例插入数据
-        query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
-        data = (lineagew_name, line_name, club)
-        try:
-            cursor.execute(query, data)
-            conn.commit()
-            reply_msg = lineagew_name + "簽到完成" 
-            print("数据插入成功！")
-        except (Exception, psycopg2.Error) as error:
-            reply_msg = "簽到失敗:", error
-            print("数据插入失敗！")
-        finally:
-            conn.close()
+        insert_data(lineagew_name, line_name, club)
             
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=reply_msg))
+            TextSendMessage(text="123"))
         return
     
     if event.message.text == "找":
@@ -105,7 +88,24 @@ def connect_to_db():
         user="default",
         password="kyx8GQivump6"
     )
-    return conn    
+    return conn
+
+def insert_data(lineagew_name, line_name, club):
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    
+    try:
+        query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
+        data = (lineagew_name, line_name, club)
+        
+        cursor.execute(query, data)
+        conn.commit()
+        print("数据插入成功！")
+    except (Exception, psycopg2.Error) as error:
+        print("插入数据时出错:", error)
+    finally:
+        conn.close()
+
 
 if __name__ == "__main__":
     app.run()
