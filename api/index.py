@@ -67,7 +67,7 @@ def handle_message(event):
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="success" + json_data))
+            TextSendMessage(text="success" + json_str))
         return
     
     if event.message.text == "找":
