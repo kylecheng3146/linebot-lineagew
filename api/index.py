@@ -58,29 +58,25 @@ def handle_message(event):
         data = {
             'Kyle': '煉獄'
         }
-        df = pd.DataFrame.from_dict(data, orient='index', columns=['value'])
-        json_str = df.to_json(orient='index')
-        json_data = json.loads(json_str)
-        with open(join('data', 'sign.json'), 'r') as file:
-            for line in file:
-                self.wfile.write(json_data)
+        with open("data/sign.json", "w") as file:
+            json.dump(data, file)
 
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="success" + json_str))
+            TextSendMessage(text="success"))
         return
     
     if event.message.text == "找":
-        with open(join('data', 'sign.json'), 'r') as file:
-            json_data = json.load(file)
-
+        with open("data/sign.json", "r") as file:
+            data = json.load(file)
+            
         # Assuming you already have the json_data dictionary
-        json_string = json.dumps(json_data)
+        result = data["Kyle"]
 
         # Print the JSON string
         line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=json_string))
+        TextSendMessage(text=result))
 
         # key = 'Kyle'
         # value = json_data.get(key)
