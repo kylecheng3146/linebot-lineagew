@@ -117,11 +117,17 @@ def handle_message(event):
         conn = connect_to_db()
         cursor = conn.cursor()
         try:
-            query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s OR club LIKE %s"
-            cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
+
+            if keyword == "":
+                query = "SELECT * FROM member"
+                cursor.execute(query)
+            else:
+                query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s OR club LIKE %s"
+                cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
+
             results = cursor.fetchall()
 
-            formatted_results = "=============查詢結果=============\n"
+            formatted_results = "============ 查詢結果 =============\n"
             for row in results:
                 formatted_row = " - ".join(str(item) for item in row)
                 formatted_results += f"{formatted_row}\n"
