@@ -55,7 +55,7 @@ def handle_message(event):
             TextSendMessage(text=reply_msg))
         return
 
-    if event.message.text in "簽到":
+    if event.message.text in '簽到':
         parts = event.message.text.split("；")
         sign = parts[0]
         line_name = parts[1]
