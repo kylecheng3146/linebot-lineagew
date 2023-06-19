@@ -127,11 +127,11 @@ def handle_message(event):
 
             results = cursor.fetchall()
 
-            formatted_results = "============ 查詢結果 =============\n"
+            formatted_results = "==== 查詢結果 ====\n"
             for row in results:
                 formatted_row = " - ".join(str(item) for item in row)
                 formatted_results += f"{formatted_row}\n"
-            formatted_results += "================================="
+            formatted_results += "================"
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=formatted_results))
