@@ -69,13 +69,18 @@ def handle_message(event):
     if keywords == "刪除":
         keyword = parts[1]
         try:
-            query = "DELETE FROM member WHERE lineagew_name = %s OR line_name = %s"
-            data = (keyword,keyword)
-            cursor.execute(query, data)
+            if keyword == "ALL":
+                query = "DELETE FROM member"
+                cursor.execute(query)
+            else:
+                query = "DELETE FROM member WHERE lineagew_name = %s OR line_name = %s"
+                data = (keyword,keyword)
+                cursor.execute(query, data)
+
             conn.commit()
-            reply_msg = "恭喜你 " + keyword + " 刪除成功"
+            reply_msg = keyword + " 刪除成功"
         except (Exception, psycopg2.Error) as error:
-            reply_msg = "很遺憾 " + keyword + " 刪除失敗"
+            reply_msg = keyword + " 刪除失敗"
         finally:
             conn.close()
                 
