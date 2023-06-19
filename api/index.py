@@ -5,6 +5,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from os.path import join
 import pandas as pd
 import json
+import psycopg2
 
 import os
 
@@ -58,8 +59,12 @@ def handle_message(event):
         data = {
             'Kyle': '煉獄'
         }
-        with open("data/sign.json", "w") as file:
-            json.dump(data, file)
+        df = pd.DataFrame.from_dict(data, orient='index', columns=['value'])
+        json_str = df.to_json(orient='index')
+        json_data = json.loads(json_str)
+        with open(join('data', 'sign.json'), 'r') as file:
+            for line in file:
+                self.wfile.write(json_data)
 
         line_bot_api.reply_message(
             event.reply_token,
@@ -67,29 +72,26 @@ def handle_message(event):
         return
     
     if event.message.text == "找":
-        with open("data/sign.json", "r") as file:
-            data = json.load(file)
-            
-        # Assuming you already have the json_data dictionary
-        result = data["Kyle"]
+        conn = connect_to_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM member")
+        results = cursor.fetchall()
+        conn.close()
 
-        # Print the JSON string
         line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=result))
-
-        # key = 'Kyle'
-        # value = json_data.get(key)
-        # reply_msg = ""
-        # if value is not None:
-        #     reply_msg = "The value for key '{key}' is: {value}"
-        # else:
-        #     reply_msg = "No value found for key '{key}'"
-
-        # line_bot_api.reply_message(
-        #     event.reply_token,
-        #     TextSendMessage(text=reply_msg))
+            event.reply_token,
+            TextSendMessage(text=str(results)))
         return
+    
+def connect_to_db():
+    conn = psycopg2.connect(
+        host="ep-white-firefly-975577-pooler.us-east-1.postgres.vercel-storage.com",
+        port="5432",
+        database="verceldb",
+        user="default",
+        password="kyx8GQivump6"
+    )
+    return conn    
 
 if __name__ == "__main__":
     app.run()
