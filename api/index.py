@@ -76,7 +76,7 @@ def handle_message(event):
             cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
             results = cursor.fetchall()
             for member in results:
-                output = ", ".join(str(field) for field in member)
+                output += ", ".join(str(field) for field in member)
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=output))
