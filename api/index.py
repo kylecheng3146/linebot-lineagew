@@ -71,12 +71,9 @@ def handle_message(event):
         return
     
     if event.message.text == "找":
-        # 读取JSON文件
         with open(join('data', 'sign.json'), 'r') as file:
-            for line in file:
-                json_data = json.load(file)
+            json_data = json.load(file)
 
-        # 查询特定key的value
         key = 'Kyle'
         value = json_data.get(key)
         reply_msg = ""
