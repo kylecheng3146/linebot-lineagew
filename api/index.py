@@ -76,11 +76,11 @@ def handle_message(event):
             cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
             results = cursor.fetchall()
 
-            formatted_results = ""
+            formatted_results = "=============查詢結果============="
             for row in results:
                 formatted_row = " - ".join(str(item) for item in row)
                 formatted_results += f"{formatted_row}\n"
-
+            formatted_results += "================================="
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=formatted_results))
