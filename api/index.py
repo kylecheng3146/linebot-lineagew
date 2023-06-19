@@ -68,15 +68,12 @@ def handle_message(event):
         return
 
     if keywords == "找":
-        prompt = parts[1]
+        keyword = parts[1]
         conn = connect_to_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM member")
-        results = cursor.fetchall()
-        conn.close()
         try:
-            query = "SELECT * FROM member WHERE lineagew_name = %s or line_name = %s or club = %s"
-            cursor.execute(query, (prompt,))
+            query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s OR club LIKE %s"
+            cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
             results = cursor.fetchall()
             line_bot_api.reply_message(
                 event.reply_token,
