@@ -66,6 +66,29 @@ def handle_message(event):
             TextSendMessage(text=reply_msg))
         return
 
+    if keywords == "修改":
+        old_line_name = parts[1]
+        old_lineagew_name = parts[2]
+        old_club = parts[3]
+        line_name = parts[4]
+        lineagew_name = parts[5]
+        club = parts[6]
+        try:
+            query = "UPDATE member SET lineagew_name = %s, line_name = %s, club = %s WHERE lineagew_name = %s OR line_name = %s OR club = %s"
+            data = (lineagew_name, line_name, club, old_lineagew_name, old_line_name, old_club)
+            cursor.execute(query, data)
+            conn.commit()
+            reply_msg = old_lineagew_name + " 修改為 " + lineagew_name + "成功"
+        except (Exception, psycopg2.Error) as error:
+            reply_msg = old_lineagew_name + " 修改為 " + lineagew_name + "失敗"
+        finally:
+            conn.close()
+                
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg))
+        return
+
     if keywords == "刪除":
         keyword = parts[1]
         try:
