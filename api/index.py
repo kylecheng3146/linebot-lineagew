@@ -43,13 +43,13 @@ def handle_message(event):
 
     parts = event.message.text.split("；")
     keywords = parts[0]
-    line_name = parts[1]
-    lineagew_name = parts[2]
-    club = parts[3]
     conn = connect_to_db()
     cursor = conn.cursor()
 
     if keywords == "簽到":
+        line_name = parts[1]
+        lineagew_name = parts[2]
+        club = parts[3]
         try:
             query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
             data = (lineagew_name, line_name, club)
@@ -68,15 +68,26 @@ def handle_message(event):
         return
 
     if keywords == "找":
+        prompt = parts[1]
         conn = connect_to_db()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM member")
         results = cursor.fetchall()
         conn.close()
+        try:
+            query = "SELECT * FROM member WHERE lineagew_name = %s or line_name = %s or club = %s"
+            cursor.execute(query, (prompt,))
+            results = cursor.fetchall()
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=str(results)))
+            return 
+        except (Exception, psycopg2.Error) as error:
+            print("查询資料出錯:", error)
+        finally:
+            conn.close()
+        return
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=str(results)))
         return
 
 def connect_to_db():
