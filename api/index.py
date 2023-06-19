@@ -55,20 +55,35 @@ def handle_message(event):
             TextSendMessage(text=reply_msg))
         return
 
-    if event.message.text == "簽到":
+    if event.message.text in "簽到":
         data = {
             'Kyle': '煉獄'
         }
-        df = pd.DataFrame.from_dict(data, orient='index', columns=['value'])
-        json_str = df.to_json(orient='index')
-        json_data = json.loads(json_str)
-        with open(join('data', 'sign.json'), 'r') as file:
-            for line in file:
-                self.wfile.write(json_data)
+        parts = event.message.text.split("；")
+        sign = parts[0]
+        line_name = parts[1]
+        lineagew_name = parts[2]
+        club = parts[3]
 
+        conn = connect_to_db()
+        cursor = conn.cursor()
+        reply_msg = ""
+        
+        # 示例插入数据
+        query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
+        data = (lineagew_name, line_name, club)
+        try:
+            cursor.execute(query, data)
+            conn.commit()
+            reply_msg = lineagew_name, "簽到完成" 
+        except (Exception, psycopg2.Error) as error:
+            reply_msg = "簽到失敗:", error
+        finally:
+            conn.close()
+            
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="success"))
+            TextSendMessage(text=reply_msg))
         return
     
     if event.message.text == "找":
