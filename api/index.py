@@ -51,6 +51,16 @@ def handle_message(event):
         # 從訊息中取得用戶的資訊
         lineagew_name = parts[1]
         line_name = parts[2]
+
+        # 如果用戶的天堂W名稱或LINE名稱為空
+        if lineagew_name == "" or line_name == "":
+            # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
+            line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱"))
+            # 結束此次操作
+            return
+            
         try:
             # 將用戶的資訊插入到資料庫中
             query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
@@ -156,11 +166,11 @@ def handle_message(event):
             results = cursor.fetchall()
 
             # 格式化查詢結果
-            formatted_results = "==== 查詢結果 ====\n"
+            formatted_results = "==== 查詢結果" + cursor.rowcount + " 筆====\n"
             for row in results:
                 formatted_row = " - ".join(str(item) for item in row)
                 formatted_results += f"{formatted_row}\n"
-            formatted_results += "================"
+            formatted_results += "===================="
 
             # 透過 Line Bot API 回覆訊息
             line_bot_api.reply_message(
