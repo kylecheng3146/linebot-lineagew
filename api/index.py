@@ -53,7 +53,7 @@ def handle_message(event):
         line_name = parts[2]
         try:
             # 將用戶的資訊插入到資料庫中
-            query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s, %s)"
+            query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
             data = (lineagew_name, line_name)
             cursor.execute(query, data)
             # 提交插入操作
