@@ -69,21 +69,32 @@ def handle_message(event):
         lineagew_name = parts[1]
         line_name = parts[2]
 
-        try:
-            # 將用戶的資訊插入到資料庫中
-            query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
-            data = (lineagew_name, line_name)
-            cursor.execute(query, data)
-            # 提交插入操作
-            conn.commit()
-            # 回覆簽到成功訊息
-            reply_msg = lineagew_name + " 簽到成功"
-        except (Exception, psycopg2.Error) as error:
-            # 如果插入過程中出現錯誤，則回覆簽到失敗訊息
-            reply_msg = lineagew_name + " 簽到失敗"
-        finally:
-            # 最後，關閉資料庫連接
-            conn.close()
+        # 在插入之前先查詢是否已經有資料
+        query = "SELECT * FROM member WHERE lineagew_name = %s AND line_name = %s"
+        data = (lineagew_name, line_name)
+        cursor.execute(query, data)
+        result = cursor.fetchone()
+
+        # 如果已經有資料
+        if result:
+            # 回覆line_bot_api已簽到的訊息
+            reply_msg = lineagew_name + " 已經簽到過了, 想被精靈鬼飛噗你就繼續.😍"
+        else:
+            try:
+                # 將用戶的資訊插入到資料庫中
+                query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
+                data = (lineagew_name, line_name)
+                cursor.execute(query, data)
+                # 提交插入操作
+                conn.commit()
+                # 回覆簽到成功訊息
+                reply_msg = lineagew_name + " 簽到成功"
+            except (Exception, psycopg2.Error) as error:
+                # 如果插入過程中出現錯誤，則回覆簽到失敗訊息
+                reply_msg = lineagew_name + " 簽到失敗"
+            finally:
+                # 最後，關閉資料庫連接
+                conn.close()
                 
         # 透過 Line Bot API 回覆訊息
         line_bot_api.reply_message(
