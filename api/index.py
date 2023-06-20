@@ -172,10 +172,8 @@ def handle_message(event):
 
             # 獲取查詢結果
             results = cursor.fetchall()
-
-
             # 格式化查询结果
-            formatted_results = f"==== 查询结果 {cursor.rowcount} 筆 ====\n"
+            formatted_results = f"==== 查詢结果 {cursor.rowcount} 筆 ====\n"
             for row in results:
                 formatted_row = " - ".join(str(item) for item in row[1:])  # 从第二列开始组合结果
                 formatted_results += f"{formatted_row}\n"
@@ -188,7 +186,7 @@ def handle_message(event):
             return 
         except (Exception, psycopg2.Error) as error:
             # 如果查詢過程中出現錯誤，則輸出錯誤訊息
-            print("查询資料出錯:", error)
+            print("查詢資料出錯:", error)
         finally:
             # 最後，關閉資料庫連接
             conn.close()
