@@ -51,11 +51,10 @@ def handle_message(event):
         # 從訊息中取得用戶的資訊
         line_name = parts[1]
         lineagew_name = parts[2]
-        club = parts[3]
         try:
             # 將用戶的資訊插入到資料庫中
-            query = "INSERT INTO member (lineagew_name, line_name, club) VALUES (%s, %s, %s)"
-            data = (lineagew_name, line_name, club)
+            query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s, %s)"
+            data = (lineagew_name, line_name)
             cursor.execute(query, data)
             # 提交插入操作
             conn.commit()
@@ -79,15 +78,13 @@ def handle_message(event):
         # 從訊息中取得舊的資訊
         old_line_name = parts[1]
         old_lineagew_name = parts[2]
-        old_club = parts[3]
         # 從訊息中取得新的資訊
-        line_name = parts[4]
-        lineagew_name = parts[5]
-        club = parts[6]
+        line_name = parts[3]
+        lineagew_name = parts[4]
         try:
             # 更新資料庫中的資訊
-            query = "UPDATE member SET lineagew_name = %s, line_name = %s, club = %s WHERE lineagew_name = %s OR line_name = %s OR club = %s"
-            data = (lineagew_name, line_name, club, old_lineagew_name, old_line_name, old_club)
+            query = "UPDATE member SET lineagew_name = %s, line_name = %s, WHERE lineagew_name = %s OR line_name = %s"
+            data = (lineagew_name, line_name, old_lineagew_name, old_line_name)
             cursor.execute(query, data)
             # 提交更新操作
             conn.commit()
@@ -152,7 +149,7 @@ def handle_message(event):
                 cursor.execute(query)
             else:
                 # 否則，根據關鍵字查詢成員
-                query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s OR club LIKE %s"
+                query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s"
                 cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
 
             # 獲取查詢結果
