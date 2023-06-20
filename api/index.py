@@ -150,7 +150,7 @@ def handle_message(event):
             else:
                 # 否則，根據關鍵字查詢成員
                 query = "SELECT * FROM member WHERE lineagew_name LIKE %s OR line_name LIKE %s"
-                cursor.execute(query, (f'%{keyword}%', f'%{keyword}%', f'%{keyword}%'))
+                cursor.execute(query, (f'%{keyword}%', f'%{keyword}%'))
 
             # 獲取查詢結果
             results = cursor.fetchall()
