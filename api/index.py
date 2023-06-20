@@ -41,7 +41,14 @@ def handle_message(event):
     if event.message.type != "text":
         return
 
-    parts = event.message.text.split("；")
+    # 從事件中取得訊息文字
+    message = event.message.text
+    # 如果訊息中包含分號，則將其替換為全角分號
+    if ";" in message or ":" in message:
+        message = message.replace(";", "；")
+        message = message.replace(":", "；")
+        
+    parts = message.split("；")
     keywords = parts[0]
     conn = connect_to_db()
     cursor = conn.cursor()
