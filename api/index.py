@@ -165,10 +165,11 @@ def handle_message(event):
             # 獲取查詢結果
             results = cursor.fetchall()
 
-            # 格式化查詢結果
-            formatted_results = "==== 查詢結果" + cursor.rowcount + " 筆====\n"
+
+            # 格式化查询结果
+            formatted_results = f"==== 查询结果 {cursor.rowcount} 筆 ====\n"
             for row in results:
-                formatted_row = " - ".join(str(item) for item in row)
+                formatted_row = " - ".join(str(item) for item in row[1:])  # 从第二列开始组合结果
                 formatted_results += f"{formatted_row}\n"
             formatted_results += "===================="
 
