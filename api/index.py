@@ -49,8 +49,8 @@ def handle_message(event):
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
         # 從訊息中取得用戶的資訊
-        line_name = parts[1]
-        lineagew_name = parts[2]
+        lineagew_name = parts[1]
+        line_name = parts[2]
         try:
             # 將用戶的資訊插入到資料庫中
             query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s, %s)"
