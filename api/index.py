@@ -48,9 +48,9 @@ def handle_message(event):
 
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
-        
+
         # parts 包含 3 个非空元素
-        if len(parts) == 3 and all(parts):
+        if len(parts) != 3 or not all(parts):
             # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
             line_bot_api.reply_message(
                 event.reply_token,
