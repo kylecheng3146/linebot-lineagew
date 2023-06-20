@@ -48,8 +48,12 @@ def handle_message(event):
 
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
-        # 如果少輸入參數
-        if len(parts) == 3:
+        # 從訊息中取得用戶的資訊
+        lineagew_name = parts[1]
+        line_name = parts[2]
+
+        # parts 包含 3 个非空元素
+        if len(parts) == 3 and all(parts):
             # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
             line_bot_api.reply_message(
                 event.reply_token,
@@ -57,19 +61,6 @@ def handle_message(event):
             # 結束此次操作
             return
 
-        # 從訊息中取得用戶的資訊
-        lineagew_name = parts[1]
-        line_name = parts[2]
-
-        # 如果用戶的天堂W名稱或LINE名稱為空
-        if lineagew_name == "" or line_name == "":
-            # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
-            line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱"))
-            # 結束此次操作
-            return
-            
         try:
             # 將用戶的資訊插入到資料庫中
             query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
