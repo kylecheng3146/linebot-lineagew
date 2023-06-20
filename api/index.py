@@ -48,10 +48,7 @@ def handle_message(event):
 
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
-        # 從訊息中取得用戶的資訊
-        lineagew_name = parts[1]
-        line_name = parts[2]
-
+        
         # parts 包含 3 个非空元素
         if len(parts) == 3 and all(parts):
             # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
@@ -60,6 +57,10 @@ def handle_message(event):
                 TextSendMessage(text="簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱"))
             # 結束此次操作
             return
+
+        # 從訊息中取得用戶的資訊
+        lineagew_name = parts[1]
+        line_name = parts[2]
 
         try:
             # 將用戶的資訊插入到資料庫中
