@@ -12,7 +12,7 @@ def connect_to_db():
 
 
 def select_member(cursor, lineagew_name, line_name):
-    query = "SELECT * FROM member WHERE lineagew_name = %s AND line_name = %s"
+    query = "SELECT * FROM member WHERE lineagew_name = %s OR line_name = %s"
     data = (lineagew_name, line_name)
     cursor.execute(query, data)
     return cursor.fetchone()
