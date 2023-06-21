@@ -67,9 +67,7 @@ def handle_message(event):
         刪除；line、天堂W名稱都行 (需輸入詳細名稱)
         例-> 刪除；精靈鬼〻銀行
         """
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+        reply_message(event, reply_msg)
         return
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
