@@ -52,7 +52,24 @@ def handle_message(event):
     keywords = parts[0]
     conn = connect_to_db()
     cursor = conn.cursor()
+    if keywords == "功能":
+        reply_msg = """
+        【簽到】
+        簽到；天堂W名稱；Line名稱；
+        例-> 簽到；精靈鬼〻銀行；大正妹
 
+        【查詢】
+        找；line、天堂W名稱都行 (可模糊查詢)
+        例-> 找；正妹
+
+        【刪除】
+        刪除；line、天堂W名稱都行 (需輸入詳細名稱)
+        例-> 刪除；精靈鬼〻銀行
+        """
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=reply_msg))
+        return
     # 如果關鍵字為 "簽到"
     if keywords == "簽到":
 
