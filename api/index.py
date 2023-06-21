@@ -8,6 +8,8 @@ import json
 import psycopg2
 import os
 import requests
+from db_operations import connect_to_db, select_member, insert_member, close_connection
+
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -51,49 +53,24 @@ def handle_message(event):
     keywords = parts[0]
     conn = connect_to_db()
     cursor = conn.cursor()
-
-    # 如果關鍵字為 "簽到"
     if keywords == "簽到":
-
-        # parts 包含 3 个非空元素
         if len(parts) != 3 or not all(parts):
-            # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
             reply_message(event, "簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱")
-            # 結束此次操作
             return
-
-        # 從訊息中取得用戶的資訊
         lineagew_name = parts[1]
         line_name = parts[2]
-
-        # 在插入之前先查詢是否已經有資料
-        query = "SELECT * FROM member WHERE lineagew_name = %s AND line_name = %s"
-        data = (lineagew_name, line_name)
-        cursor.execute(query, data)
-        result = cursor.fetchone()
-
-        # 如果已經有資料
+        result = select_member(cursor, lineagew_name, line_name)
         if result:
-            # 回覆line_bot_api已簽到的訊息
             reply_msg = lineagew_name + "還在皮?你已經簽到過了,想被精靈鬼飛噗你就繼續 😍"
         else:
             try:
-                # 將用戶的資訊插入到資料庫中
-                query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"
-                data = (lineagew_name, line_name)
-                cursor.execute(query, data)
-                # 提交插入操作
-                conn.commit()
-                # 回覆簽到成功訊息
+                insert_member(cursor, conn, lineagew_name, line_name)
                 reply_msg = lineagew_name + "簽到成功囉, 請跟精靈鬼領取一次飛噗 👍"
             except (Exception, psycopg2.Error) as error:
-                # 如果插入過程中出現錯誤，則回覆簽到失敗訊息
+                logging.error(f"Error occurred: {error}")
                 reply_msg = lineagew_name + " 簽到失敗了, "
             finally:
-                # 最後，關閉資料庫連接
-                conn.close()
-                
-        # 透過 Line Bot API 回覆訊息
+                close_connection(conn)
         reply_message(event, reply_msg)
         return
 
@@ -191,16 +168,6 @@ def handle_message(event):
             # 最後，關閉資料庫連接
             conn.close()
         return
-
-def connect_to_db():
-    conn = psycopg2.connect(
-        host="ep-white-firefly-975577-pooler.us-east-1.postgres.vercel-storage.com",
-        port="5432",
-        database="verceldb",
-        user="default",
-        password="kyx8GQivump6"
-    )
-    return conn
 
 def reply_message(event, reply_msg):
     # 透過 Line Bot API 回覆訊息
