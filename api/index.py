@@ -6,8 +6,8 @@ from os.path import join
 import pandas as pd
 import json
 import psycopg2
-
 import os
+import requests
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -21,7 +21,7 @@ def home():
     return 'Hello, World!'
 
 @app.route("/webhook", methods=['POST'])
-def callback():
+def webhook():
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
     # get request body as text
@@ -33,7 +33,6 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
-
 
 @line_handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -59,9 +58,7 @@ def handle_message(event):
         # parts 包含 3 个非空元素
         if len(parts) != 3 or not all(parts):
             # 透過 Line Bot API 回覆訊息，告知用戶簽到失敗並提供正確的簽到格式
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱"))
+            reply_message(event, "簽到失敗, 請填寫正確格式 -> 簽到；天堂W名稱；LINE名稱")
             # 結束此次操作
             return
 
@@ -78,7 +75,7 @@ def handle_message(event):
         # 如果已經有資料
         if result:
             # 回覆line_bot_api已簽到的訊息
-            reply_msg = lineagew_name + " 已經簽到過了, 想被精靈鬼飛噗你就繼續.😍"
+            reply_msg = lineagew_name + "還在皮?你已經簽到過了,想被精靈鬼飛噗你就繼續 😍"
         else:
             try:
                 # 將用戶的資訊插入到資料庫中
@@ -88,18 +85,16 @@ def handle_message(event):
                 # 提交插入操作
                 conn.commit()
                 # 回覆簽到成功訊息
-                reply_msg = lineagew_name + " 簽到成功"
+                reply_msg = lineagew_name + "簽到成功囉, 請跟精靈鬼領取一次飛噗 👍"
             except (Exception, psycopg2.Error) as error:
                 # 如果插入過程中出現錯誤，則回覆簽到失敗訊息
-                reply_msg = lineagew_name + " 簽到失敗"
+                reply_msg = lineagew_name + " 簽到失敗了, "
             finally:
                 # 最後，關閉資料庫連接
                 conn.close()
                 
         # 透過 Line Bot API 回覆訊息
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+        reply_message(event, reply_msg)
         return
 
     # 如果關鍵字為 "修改"
@@ -127,9 +122,7 @@ def handle_message(event):
             conn.close()
                 
         # 透過 Line Bot API 回覆訊息
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+        reply_message(event, reply_msg)
         return
 
     # 如果關鍵字為 "刪除"
@@ -159,9 +152,7 @@ def handle_message(event):
             conn.close()
                 
         # 透過 Line Bot API 回覆訊息
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=reply_msg))
+        reply_message(event, reply_msg)
         return
 
     # 如果關鍵字為 "找"
@@ -191,9 +182,7 @@ def handle_message(event):
             formatted_results += "===================="
 
             # 透過 Line Bot API 回覆訊息
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=formatted_results))
+            reply_message(event, formatted_results)
             return 
         except (Exception, psycopg2.Error) as error:
             # 如果查詢過程中出現錯誤，則輸出錯誤訊息
@@ -212,6 +201,12 @@ def connect_to_db():
         password="kyx8GQivump6"
     )
     return conn
+
+def reply_message(event, reply_msg):
+    # 透過 Line Bot API 回覆訊息
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=reply_msg))
 
 if __name__ == "__main__":
     app.run()
