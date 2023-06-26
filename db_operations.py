@@ -1,12 +1,13 @@
 import psycopg2
+import os
 
 def connect_to_db():
     conn = psycopg2.connect(
-        host="ep-white-firefly-975577-pooler.us-east-1.postgres.vercel-storage.com",
-        port="5432",
-        database="verceldb",
-        user="default",
-        password="kyx8GQivump6"
+        host = os.getenv("POSTGRES_HOST"),
+        port = "5432",
+        database = os.getenv("POSTGRES_DATABASE"),
+        user = os.getenv("POSTGRES_USER"),
+        password = os.getenv("POSTGRES_PASSWORD")
     )
     return conn
 
@@ -17,6 +18,13 @@ def select_member(cursor, lineagew_name, line_name):
     cursor.execute(query, data)
     return cursor.fetchone()
 
+
+def update_member(cursor, lineagew_name, line_name, old_lineagew_name, old_line_name):
+    query = "UPDATE member SET lineagew_name = %s, line_name = %s, WHERE lineagew_name = %s OR line_name = %s"
+    data = (lineagew_name, line_name, old_lineagew_name, old_line_name)
+    cursor.execute(query, data)
+    # 提交更新操作
+    conn.commit()
 
 def insert_member(cursor, conn, lineagew_name, line_name):
     query = "INSERT INTO member (lineagew_name, line_name) VALUES (%s, %s)"

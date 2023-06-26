@@ -99,22 +99,15 @@ def handle_message(event):
         # 從訊息中取得新的資訊
         line_name = parts[3]
         lineagew_name = parts[4]
+
         try:
-            # 更新資料庫中的資訊
-            query = "UPDATE member SET lineagew_name = %s, line_name = %s, WHERE lineagew_name = %s OR line_name = %s"
-            data = (lineagew_name, line_name, old_lineagew_name, old_line_name)
-            cursor.execute(query, data)
-            # 提交更新操作
-            conn.commit()
-            # 回覆更新成功訊息
+            update_member(cursor, conn, lineagew_name, line_name, old_lineagew_name, old_line_name)
             reply_msg = old_lineagew_name + " 修改為 " + lineagew_name + "成功"
         except (Exception, psycopg2.Error) as error:
-            # 如果更新過程中出現錯誤，則回覆更新失敗訊息
+            logging.error(f"Error occurred: {error}")
             reply_msg = old_lineagew_name + " 修改為 " + lineagew_name + "失敗"
         finally:
-            # 最後，關閉資料庫連接
-            conn.close()
-                
+            close_connection(conn)
         # 透過 Line Bot API 回覆訊息
         reply_message(event, reply_msg)
         return
