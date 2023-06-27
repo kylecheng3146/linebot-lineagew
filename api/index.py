@@ -8,7 +8,7 @@ import json
 import psycopg2
 import os
 import requests
-from db_operations import connect_to_db, select_member, insert_member, close_connection
+from db_operations import connect_to_db, select_member, insert_member, close_connection, select_combat_team, insert_combat_team
 
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
