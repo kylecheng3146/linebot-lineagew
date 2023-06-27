@@ -59,6 +59,14 @@ def handle_message(event):
         簽到；天堂W名稱；Line名稱；
         例-> 簽到；精靈鬼〻銀行；大正妹
 
+        【報名出征】
+        報名出征；天堂W名稱
+        例-> 報名出征；精靈鬼〻銀行；咩系RRRRRRRR
+
+        【找出征名單】
+        找出征；天堂W名稱
+        例-> 找出征；精靈鬼〻銀行
+
         【查詢】
         找；line、天堂W名稱都行 (可模糊查詢)
         例-> 找；正妹
@@ -82,10 +90,31 @@ def handle_message(event):
         else:
             try:
                 insert_member(cursor, conn, lineagew_name, line_name)
-                reply_msg = lineagew_name + "簽到成功囉, 請跟精靈鬼領取一次飛噗 👍"
+                reply_msg = lineagew_name + "簽到成功囉, 請跟紫變精靈鬼領取一次飛噗 👍"
             except (Exception, psycopg2.Error) as error:
                 logging.error(f"Error occurred: {error}")
                 reply_msg = lineagew_name + " 簽到失敗了, "
+            finally:
+                close_connection(conn)
+        reply_message(event, reply_msg)
+        return
+
+    if keywords == "報名出征":
+        if len(parts) != 3 or not all(parts):
+            reply_message(event, "報名出征失敗, 請填寫正確格式 -> 出征；天堂W名稱；遺言")
+            return
+        lineagew_name = parts[1]
+        excitation = parts[2]
+        result = select_combat_team(cursor, lineagew_name)
+        if result:
+            reply_msg = lineagew_name + "還在皮?你已經報名過了,想留在本服被紫變精靈鬼飛噗嗎 😍"
+        else:
+            try:
+                insert_combat_team(cursor, conn, lineagew_name, excitation)
+                reply_msg = lineagew_name + "報名成功囉, 為榮耀爭光, 紫變精靈鬼給你一百次飛撲 👍"
+            except (Exception, psycopg2.Error) as error:
+                logging.error(f"Error occurred: {error}")
+                reply_msg = lineagew_name + " 報名失敗了 "
             finally:
                 close_connection(conn)
         reply_message(event, reply_msg)
