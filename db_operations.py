@@ -38,7 +38,7 @@ def insert_member(cursor, conn, lineagew_name, line_name):
     conn.commit()
 
 def insert_combat_team(cursor, conn, lineagew_name, excitation):
-    query = "INSERT INTO combat_team (lineagew_name) VALUES (%s, %s)"
+    query = "INSERT INTO combat_team (lineagew_name, excitation) VALUES (%s, %s)"
     data = (lineagew_name, excitation)
     cursor.execute(query, data)
     conn.commit()
