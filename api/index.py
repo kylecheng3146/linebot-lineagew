@@ -207,6 +207,7 @@ def handle_message(event):
             # 最後，關閉資料庫連接
             conn.close()
         return
+
     # 如果關鍵字為 "找出征"
     if keywords == "找出征":
         # 從訊息中取得查詢的關鍵字
@@ -222,7 +223,7 @@ def handle_message(event):
             else:
                 # 否則，根據關鍵字查詢出征成員
                 query = "SELECT * FROM combat_team WHERE lineagew_name LIKE %s"
-                cursor.execute(query, (f'%{keyword}%')
+                cursor.execute(query, (f'%{keyword}%'))
 
             # 獲取查詢結果
             results = cursor.fetchall()
