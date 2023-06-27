@@ -207,6 +207,43 @@ def handle_message(event):
             # 最後，關閉資料庫連接
             conn.close()
         return
+    # 如果關鍵字為 "找出征"
+    if keywords == "找出征":
+        # 從訊息中取得查詢的關鍵字
+        keyword = parts[1]
+        # 連接到資料庫
+        conn = connect_to_db()
+        cursor = conn.cursor()
+        try:
+            # 如果關鍵字為空，則查詢所有出征成員
+            if keyword == "":
+                query = "SELECT * FROM combat_team"
+                cursor.execute(query)
+            else:
+                # 否則，根據關鍵字查詢出征成員
+                query = "SELECT * FROM combat_team WHERE lineagew_name LIKE %s"
+                cursor.execute(query, (f'%{keyword}%')
+
+            # 獲取查詢結果
+            results = cursor.fetchall()
+            # 格式化查询结果
+            formatted_results = f"==== 查詢结果 {cursor.rowcount} 筆 ====\n"
+            for row in results:
+                formatted_row = " - ".join(str(item) for item in row[1:])  # 从第二列开始组合结果
+                formatted_results += f"{formatted_row}\n"
+            formatted_results += "===================="
+
+            # 透過 Line Bot API 回覆訊息
+            reply_message(event, formatted_results)
+            return 
+        except (Exception, psycopg2.Error) as error:
+            # 如果查詢過程中出現錯誤，則輸出錯誤訊息
+            print("查詢資料出錯:", error)
+        finally:
+            # 最後，關閉資料庫連接
+            conn.close()
+        return
+
 
 def reply_message(event, reply_msg):
     # 透過 Line Bot API 回覆訊息
