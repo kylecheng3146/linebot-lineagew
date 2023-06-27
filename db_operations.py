@@ -20,7 +20,7 @@ def select_member(cursor, lineagew_name, line_name):
 
 def select_combat_team(cursor, lineagew_name):
     query = "SELECT * FROM combat_team WHERE lineagew_name = %s"
-    data = (lineagew_name)
+    data = (lineagew_name,) # 注意這裡的逗號
     cursor.execute(query, data)
     return cursor.fetchone()
 
