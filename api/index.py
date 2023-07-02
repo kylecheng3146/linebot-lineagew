@@ -90,7 +90,7 @@ def handle_message(event):
         else:
             try:
                 insert_member(cursor, conn, lineagew_name, line_name)
-                reply_msg = lineagew_name + "簽到成功囉, 請跟紫變精靈鬼領取一次飛噗 👍"
+                reply_msg = lineagew_name + "簽到成功囉, 請您與柴柴跟紫變精靈鬼領取一次飛噗 👍"
             except (Exception, psycopg2.Error) as error:
                 logging.error(f"Error occurred: {error}")
                 reply_msg = lineagew_name + " 簽到失敗了, "
