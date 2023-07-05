@@ -9,7 +9,10 @@ import psycopg2
 import os
 import requests
 from db_operations import connect_to_db, select_member, insert_member, close_connection, select_combat_team, insert_combat_team
+from dotenv import load_dotenv
 
+# 載入環境變數
+load_dotenv()
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
@@ -98,6 +101,31 @@ def handle_message(event):
                 close_connection(conn)
         reply_message(event, reply_msg)
         return
+     # 取得lineagew_name和line_name
+    lineagew_name = parts[1]
+    line_name = parts[2]
+     # 從資料庫中查詢成員
+    result = select_member(cursor, lineagew_name, line_name)
+     # 如果成員存在
+    if result:
+        # 回覆已經簽到過的訊息
+        reply_msg = lineagew_name + "還在皮?你已經簽到過了,想被精靈鬼飛噗你就繼續 😍"
+    else:
+        try:
+            # 將成員插入資料庫
+            insert_member(cursor, conn, lineagew_name, line_name)
+            # 回覆簽到成功的訊息
+            reply_msg = lineagew_name + "簽到成功囉, 請跟紫變精靈鬼領取一次飛噗 👍"
+        except (Exception, psycopg2.Error) as error:
+            # 如果發生錯誤，記錄錯誤並回覆簽到失敗的訊息
+            logging.error(f"Error occurred: {error}")
+            reply_msg = lineagew_name + " 簽到失敗了, "
+        finally:
+            # 關閉資料庫連接
+            close_connection(conn)
+     # 回覆訊息
+    reply_message(event, reply_msg)
+    return
 
     if keywords == "報名出征":
         if len(parts) != 3 or not all(parts):
