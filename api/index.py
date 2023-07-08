@@ -9,10 +9,10 @@ import psycopg2
 import os
 import requests
 from db_operations import connect_to_db, select_member, insert_member, close_connection, select_combat_team, insert_combat_team
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
 # 載入環境變數
-load_dotenv()
+# load_dotenv()
 
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
